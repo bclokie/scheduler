@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function DayListItem(props) {
+const DayListItem = (props) => {
   return (
     <li>
       <h2 className="text--regular">Day Name</h2> 
