@@ -9,3 +9,4 @@ export default function DayListItem(props) {
   );
 }
 
+export default DayListItem
