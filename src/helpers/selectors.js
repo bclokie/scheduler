@@ -1,30 +1,57 @@
-export function getAppointmentsForDay(state, day) {
-  const found = state.days.find(d => day === d.name);
 
-  if (state.days.length === 0 || found === undefined) {
+export function getAppointmentsForDay(state, day) {
+  if (state.days.length === 0) {
+    return [];
+  }
+  let filteredAppointmentsID = state.days.filter(currentDay => {
+    return currentDay.name === day
+  });
+  
+  if (!filteredAppointmentsID[0]) {
     return [];
   }
 
-  return found.appointments.map(id => state.appointments[id]);
-} 
+  filteredAppointmentsID = filteredAppointmentsID[0].appointments
+  
+  const filteredAppointments = Object.values(state.appointments).filter(entry => {
+    return filteredAppointmentsID.includes(entry.id)
+  })
 
-export function getInterview(state, interview) {
-  if (interview === null) {
-    return null;
-  }
-  const output = {
-    student: interview.student,
-    interviewer: state.interviewers[interview.interviewer]
-  };
-  return output;
+  return filteredAppointments;
 }
 
 export function getInterviewersForDay(state, day) {
-  const found = state.days.find(d => day === d.name);
-
-  if (state.days.length === 0 || found === undefined) {
+  if (state.days.length === 0) {
+    return [];
+  }
+  let filteredInterviewersID = state.days.filter(currentDay => {
+    return currentDay.name === day
+  });
+  
+  if (!filteredInterviewersID[0]) {
     return [];
   }
 
-  return found.interviewers.map(id => state.interviewers[id]);
+  filteredInterviewersID = filteredInterviewersID[0].interviewers
+  
+  const filteredInterviewers = Object.values(state.interviewers).filter(entry => {
+    return filteredInterviewersID.includes(entry.id)
+  })
+
+  return filteredInterviewers;
+}
+
+export function getInterview(state, interview) {
+  if (!interview) {
+    return null
+  }
+
+  for (let interviewer in state.interviewers) {
+    if (state.interviewers[interviewer].id === interview.interviewer) {
+      return {
+        'student': interview.student,
+        'interviewer': state.interviewers[interviewer]
+      }
+    }
+  }
 }
