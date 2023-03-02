@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { getAppointmentsForDay } from "helpers/selectors";
 import axios from "axios";
 
 export default function useApplicationData() {
@@ -27,20 +26,42 @@ export default function useApplicationData() {
     );
   }, []);
 
+  /* 
+ ---Original solution. Imperfect but kept for personal reference ---
+    Had bug where spots would change when existing appointment was updated
+
   const updateSpots = (addOrSubtract) => {
     //finds the amount of spots remaining in the selected day by utilizing the getAppointments function
-    const spotsRemaining =
+    let spotsRemaining =
       getAppointmentsForDay(state, state.day).filter((spot) => {
         return !spot.interview;
-      }).length + addOrSubtract;
+      }).length + addOrSubtract
     //creates a new days state with the amount of spots remaining to set on the page
     const newDays = state.days.map((day) => {
       if (day.name === state.day) {
-        day.spots = spotsRemaining;
+        day.spots = spotsRemaining
       }
       return day;
     });
     return newDays;
+  };
+
+  */
+
+  // updated solution taught in breakout //
+  const updateSpots = (state, appointments) => {
+    const dayObj = state.days.find((d) => d.name === state.day);
+
+    let spots = 0;
+    for (const id of dayObj.appointments) {
+      const appointment = appointments[id];
+      if (!appointment.interview) {
+        spots++;
+      }
+    }
+    const day = { ...dayObj, spots };
+    const days = state.days.map((d) => (d.name === state.day ? day : d));
+    return days;
   };
 
   const bookInterview = (id, interview) => {
@@ -52,12 +73,10 @@ export default function useApplicationData() {
       ...state.appointments,
       [id]: appointment,
     };
-
-    const newDays = updateSpots(-1);
-
-    return axios
-      .put(`/api/appointments/${id}`, { ...appointment })
-      .then(() => setState({ ...state, appointments, days: newDays }));
+    return axios.put(`/api/appointments/${id}`, { ...appointment }).then(() => {
+      const days = updateSpots(state, appointments);
+      setState({ ...state, appointments, days });
+    });
   };
 
   const cancelInterview = (id) => {
@@ -71,11 +90,10 @@ export default function useApplicationData() {
       [id]: appointment,
     };
 
-    const newDays = updateSpots(1);
-
-    return axios
-      .delete(`/api/appointments/${id}`)
-      .then(() => setState({ ...state, appointments, days: newDays }));
+    return axios.delete(`/api/appointments/${id}`).then(() => {
+      const days = updateSpots(state, appointments);
+      setState({ ...state, appointments, days });
+    });
   };
 
   return { state, setState, setDay, bookInterview, cancelInterview };
