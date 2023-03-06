@@ -157,13 +157,13 @@ storiesOf("Button", module)
         onAdd={action("onAdd")}
         />)
       .add("Show", () => <Show
-        student={"Jane Doe"}
+        student={"Lydia Miller-Jones"}
         interviewer={interviewer}
         onEdit={action("onEdit")}
         onDelete={action("onDelete")}
         />)
       .add("Confirm", () => <Confirm 
-        student={"Jane Doe"}
+        student={"Lydia Miller-Jones"}
         message={"Delete the appointment?"}
         onConfirm={action("onConfirm")}
         onCancel={action("onCancel")}
@@ -176,7 +176,7 @@ storiesOf("Button", module)
       onClose={action("onClose")}
       />)
       .add("Edit form", () => <Form 
-        student={'Braden'}
+        student={'Braden Clokie'}
         interviewer={2}
         interviewers={interviewers}
         onSave={action("onSave")}
@@ -198,7 +198,7 @@ storiesOf("Button", module)
           <Appointment
             id={1}
             time="4pm"
-            interview={{ student: "Jane Doe", interviewer }}
+            interview={{ student: "Lydia Miller-Jones", interviewer }}
           />
           <Appointment time="5pm" />
         </Fragment>
